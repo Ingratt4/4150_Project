@@ -1,5 +1,8 @@
 package com.example;
 
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +12,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * JavaFX App
+ * JavaFX App... To run program open a terminal and run the command:
+ * mvn javafx:run
  */
 public class App extends Application {
 
@@ -32,7 +36,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        // Initialize the database connection
+        MongoConnection.getDatabase();
+
         launch();
     }
-
 }
