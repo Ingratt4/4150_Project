@@ -37,7 +37,9 @@ public class App extends Application {
 
     public static void main(String[] args) {
         // Initialize the database connection
-        MongoConnection.getDatabase();
+        MongoDatabase database = MongoConnection.getDatabase();
+        String dbName = database.getName();
+        System.out.println(dbName);
 
         launch();
     }
