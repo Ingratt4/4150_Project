@@ -3,8 +3,12 @@ package com.example.Controllers;
 import com.example.MongoConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class LoginController {
 
@@ -27,8 +31,9 @@ public class LoginController {
             boolean isValidLogin = MongoConnection.verifyLogin(enteredUsername, enteredPassword);
 
             if (isValidLogin) {
-                // Successful login - Perform your actions here (e.g., navigate to another
-                // scene)
+                openClassSelectionWindow();
+                closeLoginWindow();
+
                 System.out.println("Login successful!");
             } else {
                 // Invalid credentials
@@ -40,6 +45,27 @@ public class LoginController {
         } finally {
             // Close connections after use
             MongoConnection.close();
+        }
+    }
+
+    private void closeLoginWindow() {
+        Stage stage = (Stage) usernameField.getScene().getWindow();
+        stage.close();
+    }
+
+    private void openClassSelectionWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/ClassSelection.fxml"));
+            Parent root = loader.load();
+
+            // You can access the controller for the ClassSelection window
+            ClassSelectionController classSelectionController = loader.getController();
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

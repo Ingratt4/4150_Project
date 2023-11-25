@@ -15,6 +15,11 @@ import java.io.IOException;
  * JavaFX App... To run program open a terminal and run the command:
  * mvn javafx:run
  */
+
+/*
+ * Username:TestAccount
+ * Password: abcde
+ */
 public class App extends Application {
 
     private static Scene scene;
