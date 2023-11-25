@@ -30,12 +30,12 @@ public class MongoConnection {
         MongoCollection<org.bson.Document> usersCollection = database.getCollection("Login-Info");
 
         // Query MongoDB for the entered username
-        Document query = new Document("UserName", username);
+        Document query = new Document("student_id", username);
         Document user = usersCollection.find(query).first();
 
         if (user != null) {
             // If the username exists, check the password
-            String storedPassword = user.getString("Password");
+            String storedPassword = user.getString("password");
 
             // Verify the entered password against the stored password
             return password.equals(storedPassword);
