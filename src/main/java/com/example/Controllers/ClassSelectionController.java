@@ -46,9 +46,14 @@ public class ClassSelectionController {
 
     @FXML
     public void initialize() {
-        // Load course codes into the ComboBox on initialization
         loadCourseCodes();
         displayEnrolledCourses();
+
+        ///
+        courseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+        instructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructor"));
+        scheduleColumn.setCellValueFactory(new PropertyValueFactory<>("schedule"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
     }
 
@@ -102,7 +107,6 @@ public class ClassSelectionController {
 
     @FXML
     void displayEnrolledCourses() {
-
         String studentID = Session.getInstance().getStudentID();
 
         try {
@@ -122,6 +126,9 @@ public class ClassSelectionController {
                 Document courseQuery = new Document("course_code", courseCode);
                 Document courseDetails = coursesCollection.find(courseQuery).first();
 
+                // Debugging printout
+                System.out.println("Enrolled Course Details: " + courseDetails.toJson());
+
                 // Create Course object or extract details as needed and add it to the list
                 Course course = new Course(
                         courseDetails.getString("course_code"),
@@ -131,8 +138,11 @@ public class ClassSelectionController {
                 enrolledCourseList.add(course);
             }
 
+            // Debugging printout
+            System.out.println("Enrolled Courses List: " + enrolledCourseList);
+
             // Set the enrolled courses into the TableView
-            courseTableView.setItems(enrolledCourseList);
+            updateTableView(enrolledCourseList);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,6 +209,8 @@ public class ClassSelectionController {
 
                             // Display enrollment confirmation
                             courseInfoLabel.setText("Enrolled in: " + selectedCourseCode);
+                            // update
+                            displayEnrolledCourses();
                         } else {
                             courseInfoLabel.setText("No available seats for this course.");
                         }
