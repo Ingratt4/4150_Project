@@ -1,6 +1,8 @@
 package com.example.Controllers;
 
 import com.example.MongoConnection;
+import com.example.Session;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +33,7 @@ public class LoginController {
             boolean isValidLogin = MongoConnection.verifyLogin(enteredUsername, enteredPassword);
 
             if (isValidLogin) {
+                Session.getInstance().setStudentID(enteredUsername);
                 openClassSelectionWindow();
                 closeLoginWindow();
 
@@ -54,9 +57,6 @@ public class LoginController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/ClassSelection.fxml"));
             Parent root = loader.load();
-            // You can access the controller for the ClassSelection window
-            ClassSelectionController classSelectionController = loader.getController();
-
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.show();

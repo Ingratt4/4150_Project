@@ -2,6 +2,7 @@ package com.example.Controllers;
 
 import com.example.Course;
 import com.example.MongoConnection;
+import com.example.Session;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -110,9 +111,10 @@ public class ClassSelectionController {
 
     @FXML
     void displayEnrolledCourses() {
+
         // Retrieve the logged-in student's ID (this should come from your login
         // process)
-        String studentID = "test_student_id"; // Replace with the actual student ID
+        String studentID = "";
 
         try {
             MongoDatabase database = MongoConnection.getDatabase();
@@ -161,21 +163,29 @@ public class ClassSelectionController {
                 MongoDatabase database = MongoConnection.getDatabase();
                 MongoCollection<Document> enrollmentCollection = database.getCollection("Enrollment");
                 MongoCollection<Document> coursesCollection = database.getCollection("Courses");
+                MongoCollection<Document> studentInfo = database.getCollection("Login-Info");
+
+                String studentID = Session.getInstance().getStudentID(); // Replace with the actual student ID
 
                 // Query for the selected course
                 Document courseQuery = new Document("course_code", selectedCourseCode);
                 Document selectedCourse = coursesCollection.find(courseQuery).first();
 
-                if (selectedCourse != null) {
+                // Query for student ID
+                Document studentQuery = new Document("student_id", studentID);
+                Document selectedID = studentInfo.find(studentQuery).first();
+                System.out.println("Selected Course: " + selectedCourse);
+                System.out.println("Selected ID: " + selectedID);
+
+                if (selectedCourse != null && selectedID != null) {
+                    // Extract student information
+                    String studentName = selectedID.getString("name");
+
                     // Check if seats are available
                     int availableSeats = selectedCourse.containsKey("seats_available")
                             ? selectedCourse.getInteger("seats_available")
                             : 0;
                     if (availableSeats > 0) {
-                        // Get student information (you may need to retrieve the logged-in student's ID)
-                        String studentID = "test_student_id"; // Replace with the actual student ID
-                        String studentName = "Test Student"; // Replace with the actual student name
-
                         // Create an enrollment document
                         Document enrollmentDocument = new Document();
                         enrollmentDocument.append("student_id", studentID);
@@ -196,9 +206,8 @@ public class ClassSelectionController {
                         courseInfoLabel.setText("No available seats for this course.");
                     }
                 } else {
-                    courseInfoLabel.setText("Course not found.");
+                    courseInfoLabel.setText("Course not found or student information not found.");
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
