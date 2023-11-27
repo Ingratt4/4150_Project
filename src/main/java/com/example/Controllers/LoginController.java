@@ -42,9 +42,6 @@ public class LoginController {
         } catch (Exception e) {
             // Handle exceptions, log or show an error message to the user
             e.printStackTrace();
-        } finally {
-            // Close connections after use
-            MongoConnection.close();
         }
     }
 
