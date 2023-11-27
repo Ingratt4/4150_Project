@@ -48,17 +48,8 @@ public class ClassSelectionController {
     public void initialize() {
         // Load course codes into the ComboBox on initialization
         loadCourseCodes();
-        Course course1 = new Course("COMP1000", "John Doe", "Monday 9-11 AM", "Introduction to Programming");
-        Course course2 = new Course("MATH2001", "Jane Smith", "Wednesday 1-3 PM", "Advanced Mathematics");
+        displayEnrolledCourses();
 
-        // Add the sample Course objects to the TableView
-        courseTableView.getItems().addAll(course1, course2);
-
-        // Bind columns to respective properties in the Course class
-        courseCodeColumn.setCellValueFactory(data -> data.getValue().courseCodeProperty());
-        instructorColumn.setCellValueFactory(data -> data.getValue().instructorProperty());
-        scheduleColumn.setCellValueFactory(data -> data.getValue().scheduleProperty());
-        descriptionColumn.setCellValueFactory(data -> data.getValue().descriptionProperty());
     }
 
     private void loadCourseCodes() {
@@ -112,9 +103,7 @@ public class ClassSelectionController {
     @FXML
     void displayEnrolledCourses() {
 
-        // Retrieve the logged-in student's ID (this should come from your login
-        // process)
-        String studentID = "";
+        String studentID = Session.getInstance().getStudentID();
 
         try {
             MongoDatabase database = MongoConnection.getDatabase();
@@ -174,36 +163,47 @@ public class ClassSelectionController {
                 // Query for student ID
                 Document studentQuery = new Document("student_id", studentID);
                 Document selectedID = studentInfo.find(studentQuery).first();
-                System.out.println("Selected Course: " + selectedCourse);
-                System.out.println("Selected ID: " + selectedID);
 
                 if (selectedCourse != null && selectedID != null) {
                     // Extract student information
                     String studentName = selectedID.getString("name");
+                    int totalClasses = selectedID.getInteger("total_classes", 0);
 
-                    // Check if seats are available
-                    int availableSeats = selectedCourse.containsKey("seats_available")
-                            ? selectedCourse.getInteger("seats_available")
-                            : 0;
-                    if (availableSeats > 0) {
-                        // Create an enrollment document
-                        Document enrollmentDocument = new Document();
-                        enrollmentDocument.append("student_id", studentID);
-                        enrollmentDocument.append("student_name", studentName);
-                        enrollmentDocument.append("course_code", selectedCourseCode);
+                    // Check if the student can enroll in another class (limit of 5)
+                    if (totalClasses < 5) {
+                        // Check if seats are available
+                        int availableSeats = selectedCourse.containsKey("seats_available")
+                                ? selectedCourse.getInteger("seats_available")
+                                : 0;
+                        if (availableSeats > 0) {
+                            // Create an enrollment document
+                            Document enrollmentDocument = new Document();
+                            enrollmentDocument.append("student_id", studentID);
+                            enrollmentDocument.append("student_name", studentName);
+                            enrollmentDocument.append("course_code", selectedCourseCode);
 
-                        // Insert the enrollment document into the Enrollment collection
-                        enrollmentCollection.insertOne(enrollmentDocument);
+                            // Insert the enrollment document into the Enrollment collection
+                            enrollmentCollection.insertOne(enrollmentDocument);
 
-                        // Decrease the available seats for the selected course by one
-                        int newAvailableSeats = availableSeats - 1;
-                        coursesCollection.updateOne(courseQuery,
-                                new Document("$set", new Document("seats_available", newAvailableSeats)));
+                            // Decrease the available seats for the selected course by one
+                            int newAvailableSeats = availableSeats - 1;
+                            coursesCollection.updateOne(courseQuery,
+                                    new Document("$set", new Document("seats_available", newAvailableSeats)));
 
-                        // Display enrollment confirmation
-                        courseInfoLabel.setText("Enrolled in: " + selectedCourseCode);
+                            // Increment the total_classes for the student in the Login_Info collection
+                            studentInfo.updateOne(studentQuery,
+                                    new Document("$inc", new Document("total_classes", 1)));
+
+                            // Update the totalClasses variable locally
+                            totalClasses++;
+
+                            // Display enrollment confirmation
+                            courseInfoLabel.setText("Enrolled in: " + selectedCourseCode);
+                        } else {
+                            courseInfoLabel.setText("No available seats for this course.");
+                        }
                     } else {
-                        courseInfoLabel.setText("No available seats for this course.");
+                        courseInfoLabel.setText("You have reached the maximum limit of classes.");
                     }
                 } else {
                     courseInfoLabel.setText("Course not found or student information not found.");
