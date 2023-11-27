@@ -1,78 +1,78 @@
 package com.example.Controllers;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import com.example.MongoConnection;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassSelectionController {
 
     @FXML
-    private Button viewCoursesButton;
+    private ComboBox<String> courseComboBox;
 
     @FXML
-    private Label coursesLabel;
+    private Label courseInfoLabel;
 
-    private MongoDatabase database; // Declare the database variable at the class level
+    private List<Document> courses;
 
-    // This method handles the "View Courses" button action
     @FXML
-    void handleViewCourses(ActionEvent event) {
+    public void initialize() {
+        // Load course codes into the ComboBox on initialization
+        loadCourseCodes();
+    }
+
+    private void loadCourseCodes() {
         try {
-            System.out.println("Button clicked - Fetching courses...");
-
-            // Initialize the MongoDB connection if it's not already initialized
-            if (database == null) {
-                System.out.println("Establishing MongoDB connection...");
-                database = MongoConnection.getDatabase();
-            }
-
+            MongoDatabase database = MongoConnection.getDatabase();
             MongoCollection<Document> coursesCollection = database.getCollection("Courses");
 
-            // Perform a query to get available courses
+            // Fetch course codes
             FindIterable<Document> availableCourses = coursesCollection.find();
-
-            // Process the availableCourses and format them to display in the UI
-            StringBuilder coursesInfo = new StringBuilder();
+            courses = new ArrayList<>();
+            List<String> courseCodes = new ArrayList<>();
             for (Document course : availableCourses) {
-                // Assuming the document fields in MongoDB are 'course_code', 'title',
-                // 'description', 'instructor', 'schedule'
                 String courseCode = course.getString("course_code");
-                String title = course.getString("title");
-                String description = course.getString("description");
-                String instructor = course.getString("instructor");
-                String schedule = course.getString("schedule");
-                String seats = course.getString("seats_available");
-
-                // Append course information to coursesInfo StringBuilder
-                coursesInfo.append("Course Code: ").append(courseCode).append("\n");
-                coursesInfo.append("Title: ").append(title).append("\n");
-                coursesInfo.append("Description: ").append(description).append("\n");
-                coursesInfo.append("Instructor: ").append(instructor).append("\n");
-                coursesInfo.append("Schedule: ").append(schedule).append("\n");
-                coursesInfo.append("Seats: ").append(seats).append("\n");
-                coursesInfo.append("\n");
+                courseCodes.add(courseCode);
+                courses.add(course); // Store course information for reference
             }
 
-            // Update the label to display the courses information
-            coursesLabel.setText(coursesInfo.toString());
+            // Populate ComboBox with course codes
+            courseComboBox.setItems(FXCollections.observableArrayList(courseCodes));
 
-            System.out.println("Courses fetched successfully!");
-
+            // Close MongoDB connection after fetching course codes
+            MongoConnection.close();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Failed to fetch courses: " + e.getMessage());
-            // Handle exceptions or display an error message in your UI
         }
     }
 
-    // Close MongoDB connection when needed (e.g., when the application is closed)
-    public void closeMongoDBConnection() {
-        MongoConnection.close();
+    @FXML
+    void handleCourseSelection(ActionEvent event) {
+        // Get the selected course code
+        String selectedCourseCode = courseComboBox.getValue();
+
+        // Find the corresponding course information
+        for (Document course : courses) {
+            if (course.getString("course_code").equals(selectedCourseCode)) {
+                // Display course details in the label
+                String details = String.format("Title: %s\nDescription: %s\nInstructor: %s\nSchedule: %s\nSeats: %s",
+                        course.getString("title"),
+                        course.getString("description"),
+                        course.getString("instructor"),
+                        course.getString("schedule"),
+                        course.getString("seats_available"));
+                courseInfoLabel.setText(details);
+                break;
+            }
+        }
     }
 }
