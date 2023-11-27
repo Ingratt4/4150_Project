@@ -17,8 +17,8 @@ import java.io.IOException;
  */
 
 /*
- * Username:TestAccount
- * Password: abcde
+ * Username: test
+ * Password: test
  */
 public class App extends Application {
 

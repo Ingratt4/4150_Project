@@ -54,7 +54,6 @@ public class LoginController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/ClassSelection.fxml"));
             Parent root = loader.load();
-
             // You can access the controller for the ClassSelection window
             ClassSelectionController classSelectionController = loader.getController();
 
