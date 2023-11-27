@@ -3,6 +3,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -20,7 +22,15 @@
                 </Label>
                 <!-- Labels to display course details -->
                 <Label fx:id="courseInfoLabel" layoutX="61.0" layoutY="151.0" prefHeight="321.0" prefWidth="186.0" />
-            <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" prefHeight="25.0" visible="false" prefWidth="75.0" text="Enroll" onAction="#handleEnroll"/>
+            <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" visible="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" text="Enroll" />
+            <TableView layoutX="852.0" layoutY="144.0" prefHeight="423.0" prefWidth="398.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Course Code" />
+                <TableColumn prefWidth="75.0" text="Professor" />
+                  <TableColumn prefWidth="75.0" text="Time" />
+                  <TableColumn prefWidth="75.0" text="Description" />
+              </columns>
+            </TableView>
             </children>
         </AnchorPane>
     </children>

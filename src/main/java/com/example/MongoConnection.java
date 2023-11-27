@@ -7,9 +7,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 public class MongoConnection {
-    private static final String CONNECTION_STRING = "mongodb+srv://student:university@cluster0.h3m1ty3.mongodb.net/?retryWrites=true&w=majority\r\n"
-            + //
-            "";
+    private static final String CONNECTION_STRING = "mongodb+srv://student:university@cluster0.h3m1ty3.mongodb.net/?retryWrites=true&w=majority";
+
     private static final String DATABASE_NAME = "University-Database"; // Replace with your actual database name
 
     private static MongoClient mongoClient;

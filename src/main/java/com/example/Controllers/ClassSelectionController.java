@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import org.bson.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +50,6 @@ public class ClassSelectionController {
 
             // Populate ComboBox with course codes
             courseComboBox.setItems(FXCollections.observableArrayList(courseCodes));
-
-            // Close MongoDB connection after fetching course codes
-            MongoConnection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,7 +74,7 @@ public class ClassSelectionController {
                         course.getString("description"),
                         course.getString("instructor"),
                         course.getString("schedule"),
-                        course.getString("seats_available"));
+                        course.getInteger("seats_available"));
                 courseInfoLabel.setText(details);
                 break;
             }
@@ -87,18 +83,55 @@ public class ClassSelectionController {
 
     @FXML
     void handleEnroll(ActionEvent event) {
-        // Get the selected course from the ComboBox
-        String selectedCourse = courseComboBox.getValue();
+        String selectedCourseCode = courseComboBox.getValue();
 
-        if (selectedCourse != null && !selectedCourse.isEmpty()) {
-            // Perform enrollment logic here based on the selectedCourse
-            // Example: Add the selected course to the student's enrolled courses in the
-            // database
+        if (selectedCourseCode != null && !selectedCourseCode.isEmpty()) {
+            try {
+                MongoDatabase database = MongoConnection.getDatabase();
+                MongoCollection<Document> enrollmentCollection = database.getCollection("Enrollment");
+                MongoCollection<Document> coursesCollection = database.getCollection("Courses");
 
-            // Update UI or display enrollment confirmation
-            courseInfoLabel.setText("Enrolled in: " + selectedCourse);
+                // Query for the selected course
+                Document courseQuery = new Document("course_code", selectedCourseCode);
+                Document selectedCourse = coursesCollection.find(courseQuery).first();
+
+                if (selectedCourse != null) {
+                    // Check if seats are available
+                    Long availableSeatsLong = selectedCourse.getLong("seats_available");
+                    int availableSeats = availableSeatsLong != null ? availableSeatsLong.intValue() : 0;
+
+                    if (availableSeats > 0) {
+                        // Get student information (you may need to retrieve the logged-in student's ID)
+                        String studentID = "test_student_id"; // Replace with the actual student ID
+                        String studentName = "Test Student"; // Replace with the actual student name
+
+                        // Create an enrollment document
+                        Document enrollmentDocument = new Document();
+                        enrollmentDocument.append("student_id", studentID);
+                        enrollmentDocument.append("student_name", studentName);
+                        enrollmentDocument.append("course_code", selectedCourseCode);
+
+                        // Insert the enrollment document into the Enrollment collection
+                        enrollmentCollection.insertOne(enrollmentDocument);
+
+                        // Decrease the available seats for the selected course by one
+                        int newAvailableSeats = availableSeats - 1;
+                        coursesCollection.updateOne(courseQuery,
+                                new Document("$set", new Document("seats_available", newAvailableSeats)));
+
+                        // Display enrollment confirmation
+                        courseInfoLabel.setText("Enrolled in: " + selectedCourseCode);
+                    } else {
+                        courseInfoLabel.setText("No available seats for this course.");
+                    }
+                } else {
+                    courseInfoLabel.setText("Course not found.");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
-            // If no course is selected, provide a message to select a course
             courseInfoLabel.setText("Please select a course to enroll.");
         }
     }
