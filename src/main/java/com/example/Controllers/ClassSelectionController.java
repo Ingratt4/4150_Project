@@ -1,15 +1,21 @@
 package com.example.Controllers;
 
+import com.example.Course;
 import com.example.MongoConnection;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +27,18 @@ public class ClassSelectionController {
 
     @FXML
     private Label courseInfoLabel;
-
+    @FXML
     private List<Document> courses;
+    @FXML
+    private TableView<Course> courseTableView;
+    @FXML
+    private TableColumn<Course, String> courseCodeColumn;
+    @FXML
+    private TableColumn<Course, String> instructorColumn;
+    @FXML
+    private TableColumn<Course, String> scheduleColumn;
+    @FXML
+    private TableColumn<Course, String> descriptionColumn;
 
     @FXML
     private Button enrollButton;
@@ -31,6 +47,17 @@ public class ClassSelectionController {
     public void initialize() {
         // Load course codes into the ComboBox on initialization
         loadCourseCodes();
+        Course course1 = new Course("COMP1000", "John Doe", "Monday 9-11 AM", "Introduction to Programming");
+        Course course2 = new Course("MATH2001", "Jane Smith", "Wednesday 1-3 PM", "Advanced Mathematics");
+
+        // Add the sample Course objects to the TableView
+        courseTableView.getItems().addAll(course1, course2);
+
+        // Bind columns to respective properties in the Course class
+        courseCodeColumn.setCellValueFactory(data -> data.getValue().courseCodeProperty());
+        instructorColumn.setCellValueFactory(data -> data.getValue().instructorProperty());
+        scheduleColumn.setCellValueFactory(data -> data.getValue().scheduleProperty());
+        descriptionColumn.setCellValueFactory(data -> data.getValue().descriptionProperty());
     }
 
     private void loadCourseCodes() {
@@ -82,6 +109,50 @@ public class ClassSelectionController {
     }
 
     @FXML
+    void displayEnrolledCourses() {
+        // Retrieve the logged-in student's ID (this should come from your login
+        // process)
+        String studentID = "test_student_id"; // Replace with the actual student ID
+
+        try {
+            MongoDatabase database = MongoConnection.getDatabase();
+            MongoCollection<Document> enrollmentCollection = database.getCollection("Enrollment");
+            MongoCollection<Document> coursesCollection = database.getCollection("Courses");
+
+            // Query for enrolled courses of the logged-in student
+            Document query = new Document("student_id", studentID);
+            FindIterable<Document> enrolledCourses = enrollmentCollection.find(query);
+
+            // Prepare data for TableView
+            ObservableList<Course> enrolledCourseList = FXCollections.observableArrayList();
+            for (Document enrolledCourse : enrolledCourses) {
+                String courseCode = enrolledCourse.getString("course_code");
+                // Fetch course details from the Courses collection using the course code
+                Document courseQuery = new Document("course_code", courseCode);
+                Document courseDetails = coursesCollection.find(courseQuery).first();
+
+                // Create Course object or extract details as needed and add it to the list
+                Course course = new Course(
+                        courseDetails.getString("course_code"),
+                        courseDetails.getString("instructor"),
+                        courseDetails.getString("schedule"),
+                        courseDetails.getString("description"));
+                enrolledCourseList.add(course);
+            }
+
+            // Set the enrolled courses into the TableView
+            courseTableView.setItems(enrolledCourseList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTableView(ObservableList<Course> enrolledCourses) {
+        courseTableView.setItems(enrolledCourses);
+    }
+
+    @FXML
     void handleEnroll(ActionEvent event) {
         String selectedCourseCode = courseComboBox.getValue();
 
@@ -97,9 +168,9 @@ public class ClassSelectionController {
 
                 if (selectedCourse != null) {
                     // Check if seats are available
-                    Long availableSeatsLong = selectedCourse.getLong("seats_available");
-                    int availableSeats = availableSeatsLong != null ? availableSeatsLong.intValue() : 0;
-
+                    int availableSeats = selectedCourse.containsKey("seats_available")
+                            ? selectedCourse.getInteger("seats_available")
+                            : 0;
                     if (availableSeats > 0) {
                         // Get student information (you may need to retrieve the logged-in student's ID)
                         String studentID = "test_student_id"; // Replace with the actual student ID

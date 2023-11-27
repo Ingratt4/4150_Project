@@ -22,15 +22,15 @@
                 </Label>
                 <!-- Labels to display course details -->
                 <Label fx:id="courseInfoLabel" layoutX="61.0" layoutY="151.0" prefHeight="321.0" prefWidth="186.0" />
-            <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" visible="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" text="Enroll" />
-            <TableView layoutX="852.0" layoutY="144.0" prefHeight="423.0" prefWidth="398.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Course Code" />
-                <TableColumn prefWidth="75.0" text="Professor" />
-                  <TableColumn prefWidth="75.0" text="Time" />
-                  <TableColumn prefWidth="75.0" text="Description" />
-              </columns>
-            </TableView>
+            <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" text="Enroll" visible="false" />
+            <TableView fx:id="courseTableView" layoutX="569.0" layoutY="250.0" prefHeight="300.0" prefWidth="500.0">
+             <columns>
+                 <TableColumn fx:id="courseCodeColumn" prefWidth="100.0" text="Course Code" />
+                 <TableColumn fx:id="instructorColumn" prefWidth="100.0" text="Instructor" />
+                 <TableColumn fx:id="scheduleColumn" prefWidth="100.0" text="Schedule" />
+                 <TableColumn fx:id="descriptionColumn" prefWidth="200.0" text="Description" />
+         </columns>
+    </TableView>
             </children>
         </AnchorPane>
     </children>
