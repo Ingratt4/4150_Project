@@ -23,7 +23,8 @@
                 <!-- Labels to display course details -->
                 <Label fx:id="courseInfoLabel" layoutX="61.0" layoutY="151.0" prefHeight="321.0" prefWidth="186.0" />
             <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" text="Enroll" visible="false" />
-            <TableView fx:id="courseTableView" layoutX="569.0" layoutY="250.0" prefHeight="300.0" prefWidth="500.0">
+            <Button fx:id="dropCourseButton" layoutX="39.0" layoutY="525.0" mnemonicParsing="false" onAction="#handleDropCourse" prefHeight="0.0" prefWidth="202.0" text="Drop Course" visible="false" />
+            <TableView fx:id="courseTableView" layoutX="620.0" layoutY="187.0" prefHeight="525.0" prefWidth="752.0">
              <columns>
                  <TableColumn fx:id="courseCodeColumn" prefWidth="100.0" text="Course Code" />
                  <TableColumn fx:id="instructorColumn" prefWidth="100.0" text="Instructor" />

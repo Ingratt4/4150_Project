@@ -43,6 +43,8 @@ public class ClassSelectionController {
 
     @FXML
     private Button enrollButton;
+    @FXML
+    private Button dropCourseButton;
 
     @FXML
     public void initialize() {
@@ -54,6 +56,13 @@ public class ClassSelectionController {
         instructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructor"));
         scheduleColumn.setCellValueFactory(new PropertyValueFactory<>("schedule"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        courseTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                dropCourseButton.setVisible(true);
+            } else {
+                dropCourseButton.setVisible(false);
+            }
+        });
 
     }
 
@@ -225,6 +234,51 @@ public class ClassSelectionController {
             }
         } else {
             courseInfoLabel.setText("Please select a course to enroll.");
+        }
+    }
+
+    @FXML
+    void handleDropCourse(ActionEvent event) {
+        Course selectedCourse = courseTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedCourse != null) {
+            try {
+                String studentID = Session.getInstance().getStudentID();
+                String selectedCourseCode = selectedCourse.getCourseCode();
+
+                MongoDatabase database = MongoConnection.getDatabase();
+                MongoCollection<Document> enrollmentCollection = database.getCollection("Enrollment");
+                MongoCollection<Document> coursesCollection = database.getCollection("Courses");
+                MongoCollection<Document> studentInfo = database.getCollection("Login-Info");
+
+                // Query for the selected course
+                Document courseQuery = new Document("course_code", selectedCourseCode);
+                Document selectedCourseDocument = coursesCollection.find(courseQuery).first();
+
+                // Query for student ID
+                Document studentQuery = new Document("student_id", studentID);
+
+                // Remove the enrollment for the selected course
+                enrollmentCollection
+                        .deleteOne(new Document("student_id", studentID).append("course_code", selectedCourseCode));
+
+                // Increase the available seats for the selected course
+                int availableSeats = selectedCourseDocument.getInteger("seats_available", 0);
+                coursesCollection.updateOne(courseQuery,
+                        new Document("$set", new Document("seats_available", availableSeats + 1)));
+
+                // Decrement the total_classes for the student in the Login_Info collection
+                studentInfo.updateOne(studentQuery,
+                        new Document("$inc", new Document("total_classes", -1)));
+
+                // Display confirmation or update the table view
+                displayEnrolledCourses(); // Update the enrolled courses in the table view
+                courseInfoLabel.setText("Dropped course: " + selectedCourseCode);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            courseInfoLabel.setText("Please select a course to drop.");
         }
     }
 

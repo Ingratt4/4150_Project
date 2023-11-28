@@ -16,6 +16,10 @@ public class Course {
         this.description = new SimpleStringProperty(description);
     }
 
+    public String getCourseCode() {
+        return courseCode.get(); // Assuming courseCode is a StringProperty
+    }
+
     // Getters for JavaFX properties
     public StringProperty courseCodeProperty() {
         return courseCode;
