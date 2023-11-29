@@ -32,27 +32,69 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import com.gluonhq.charm.glisten.control.TextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controllers.LoginController">
+<VBox prefHeight="600.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controllers.LoginController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="733.0" VBox.vgrow="ALWAYS">
       <children>
-            <Label layoutX="155.0" layoutY="14.0" text="UWindsor Login:">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="600.0" layoutX="480.0" stroke="TRANSPARENT" strokeType="INSIDE" width="480.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" height="600.0" stroke="TRANSPARENT" strokeType="INSIDE" width="480.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.006729475100942127">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color green="0.4000000059604645" blue="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Rectangle>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="141.0" layoutY="93.0" opacity="0.28" pickOnBounds="true" preserveRatio="true" />
+            <Label layoutX="599.0" layoutY="70.0" text="UWindsor Login" textFill="#006aff">
                <font>
-                  <Font size="45.0" />
+                  <Font name="Trebuchet MS" size="38.0" />
                </font>
             </Label>
-            <javafx.scene.control.TextField fx:id="usernameField" layoutX="246.0" layoutY="159.0" />
-            <javafx.scene.control.TextField fx:id="passwordField" layoutX="243.0" layoutY="224.0" />
-            <Label layoutX="155.0" layoutY="177.0" text="Username" />
-            <Label layoutX="159.0" layoutY="242.0" text="Password" />
-            <Button layoutX="263.0" layoutY="276.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="103.0" text="Login" onAction="#handleLogin"/>
+            <javafx.scene.control.TextField fx:id="usernameField" layoutX="547.0" layoutY="180.0" promptText="Username" style="-fx-border-color: transparent; -fx-background-color: transparent;">
+               <font>
+                  <Font name="Trebuchet MS" size="15.0" />
+               </font></javafx.scene.control.TextField>
+            <javafx.scene.control.TextField fx:id="passwordField" layoutX="547.0" layoutY="300.0" promptText="Password" style="-fx-border-color: transparent; -fx-background-color: transparent;">
+               <font>
+                  <Font name="Trebuchet MS" size="15.0" />
+               </font></javafx.scene.control.TextField>
+            <Button layoutX="652.0" layoutY="410.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #0965c1; -fx-border-color: transparent;" text="Login" textFill="WHITE" />
+            <Line endX="263.5999755859375" endY="-1.52587890625E-5" layoutX="648.0" layoutY="211.0" startX="-100.0" />
+            <Line endX="263.5999755859375" endY="-1.52587890625E-5" layoutX="648.0" layoutY="331.0" startX="-100.0" />
+            <Label layoutX="79.0" layoutY="240.0" text="WELCOME BACK" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI Light Italic" size="46.0" />
+               </font>
+            </Label>
       </children>
     </AnchorPane>
   </children>
