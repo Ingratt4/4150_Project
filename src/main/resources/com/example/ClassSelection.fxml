@@ -9,22 +9,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controllers.ClassSelectionController">
+<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1345.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controllers.ClassSelectionController">
     <children>
         <AnchorPane prefHeight="812.0" prefWidth="1500.0">
             <children>
-                <!-- Course selection dropdown -->
-                <ComboBox fx:id="courseComboBox" layoutX="71.0" layoutY="104.0" onAction="#handleCourseSelection" prefHeight="47.0" prefWidth="176.0" promptText="Click to select course" />
-                <Label alignment="CENTER" layoutX="594.0" prefHeight="72.0" prefWidth="312.0" text="Course Information">
+                <Label alignment="CENTER" layoutX="460.0" prefHeight="72.0" prefWidth="427.0" text="Course Information" textFill="#0961b8">
                     <font>
-                        <Font size="24.0" />
+                        <Font name="Trebuchet MS" size="48.0" />
                     </font>
                 </Label>
+                <!-- Course selection dropdown -->
+                <ComboBox fx:id="courseComboBox" layoutX="104.0" layoutY="186.0" onAction="#handleCourseSelection" prefHeight="47.0" prefWidth="176.0" promptText="Click to select course" />
                 <!-- Labels to display course details -->
-                <Label fx:id="courseInfoLabel" layoutX="61.0" layoutY="151.0" prefHeight="321.0" prefWidth="186.0" />
-            <Button fx:id="enrollButton" layoutX="117.0" layoutY="437.0" mnemonicParsing="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" text="Enroll" visible="false" />
-            <Button fx:id="dropCourseButton" layoutX="39.0" layoutY="525.0" mnemonicParsing="false" onAction="#handleDropCourse" prefHeight="0.0" prefWidth="202.0" text="Drop Course" visible="false" />
-            <TableView fx:id="courseTableView" layoutX="620.0" layoutY="187.0" prefHeight="525.0" prefWidth="752.0">
+                <Label fx:id="courseInfoLabel" layoutX="94.0" layoutY="233.0" prefHeight="321.0" prefWidth="186.0" />
+            <Button fx:id="enrollButton" layoutX="150.0" layoutY="519.0" mnemonicParsing="false" onAction="#handleEnroll" prefHeight="25.0" prefWidth="75.0" style="-fx-background-color: #0965c1; -fx-border-color: transparent;" text="Enroll" textFill="WHITE" visible="false" />
+            <Button fx:id="dropCourseButton" layoutX="72.0" layoutY="607.0" mnemonicParsing="false" onAction="#handleDropCourse" prefHeight="0.0" prefWidth="202.0" text="Drop Course" visible="false" />
+            <TableView fx:id="courseTableView" layoutX="454.0" layoutY="178.0" prefHeight="525.0" prefWidth="752.0">
              <columns>
                  <TableColumn fx:id="courseCodeColumn" prefWidth="100.0" text="Course Code" />
                  <TableColumn fx:id="instructorColumn" prefWidth="100.0" text="Instructor" />

@@ -74,7 +74,7 @@
                </fill>
             </Rectangle>
             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="141.0" layoutY="93.0" opacity="0.28" pickOnBounds="true" preserveRatio="true" />
-            <Label layoutX="599.0" layoutY="70.0" text="UWindsor Login" textFill="#006aff">
+            <Label layoutX="599.0" layoutY="70.0" text="UWindsor Login" textFill="#0961b8">
                <font>
                   <Font name="Trebuchet MS" size="38.0" />
                </font>
